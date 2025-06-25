@@ -1,0 +1,40 @@
+#include <stdio.h>
+
+int main() {
+    int n;
+    float calificacion, suma = 0, promedio, min = 101, max = -1;
+
+    // Validar entrada de número de estudiantes (positivo)
+    do {
+        printf("Ingrese la cantidad de estudiantes: ");
+        scanf("%d", &n);
+        if (n <= 0) {
+            printf("Error: Debe ingresar un numero positivo. Intente nuevamente.\n");
+        }
+    } while (n <= 0);
+
+    // Solicitar calificaciones
+    for (int i = 0; i < n; i++) {
+        do {
+            printf("Ingrese la calificacion del estudiante %d: ", i + 1);
+            scanf("%f", &calificacion);
+            
+            if (calificacion < 0 || calificacion > 100) {
+                printf("Error: La calificacion debe estar entre 0 y 100. Intente nuevamente.\n");
+            }
+        } while (calificacion < 0 || calificacion > 100);
+
+        // Actualizar suma, mínima y máxima
+        suma += calificacion;
+        if (calificacion < min) min = calificacion;
+        if (calificacion > max) max = calificacion;
+    }
+
+    // Calcular e imprimir promedio
+    promedio = suma / n;
+    printf("\nPromedio del grupo: %.2f\n", promedio);
+    printf("Calificacion mas alta: %.2f\n", max);
+    printf("Calificacion mas baja: %.2f\n", min);
+
+    return 0;
+}
