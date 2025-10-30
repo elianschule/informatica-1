@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <math.h>
+
+// Función para calcular área del rectángulo
+float calcularAreaRectangulo(float longitud, float altura) {
+    return longitud * altura;
+}
+
+// Función para calcular perímetro del rectángulo
+float calcularPerimetroRectangulo(float longitud, float altura) {
+    return 2 * (longitud + altura);
+}
+
+// Función para calcular diagonal del rectángulo
+float calcularDiagonalRectangulo(float longitud, float altura) {
+    return sqrt(longitud * longitud + altura * altura);
+}
+
+// Función para calcular área del círculo
+float calcularAreaCirculo(float radio) {
+    return M_PI * radio * radio;
+}
+
+// Función para calcular perímetro del círculo
+float calcularPerimetroCirculo(float radio) {
+    return 2 * M_PI * radio;
+}
+
+// Función para imprimir resultados
+void imprimirResultados(float area, float perimetro) {
+    printf("El área es: %.2f\n", area);
+    printf("El perímetro es: %.2f\n", perimetro);
+}
+
+int main() {
+    int opcion;
+    float longitud, altura, radio;
+    float area, perimetro, diagonal;
+    
+    // Mostrar menú y validar opción
+    do {
+        printf("\n=== CALCULADORA DE FIGURAS ===\n");
+        printf("1. Rectángulo\n");
+        printf("2. Círculo\n");
+        printf("Ingrese la figura que desea calcular (1: rectángulo, 2: círculo): ");
+        scanf("%d", &opcion);
+        
+        if (opcion != 1 && opcion != 2) {
+            printf("Error: Opción no válida. Debe ser 1 o 2.\n");
+        }
+    } while (opcion != 1 && opcion != 2);
+    
+    // Procesar según la opción seleccionada
+    if (opcion == 1) {
+        printf("Opción de rectángulo seleccionada\n");
+        
+        // Solicitar dimensiones del rectángulo
+        printf("Ingrese la longitud del rectángulo: ");
+        scanf("%f", &longitud);
+        printf("Ingrese la altura del rectángulo: ");
+        scanf("%f", &altura);
+        
+        // Calcular propiedades del rectángulo
+        area = calcularAreaRectangulo(longitud, altura);
+        perimetro = calcularPerimetroRectangulo(longitud, altura);
+        diagonal = calcularDiagonalRectangulo(longitud, altura);
+        
+        // Mostrar resultados
+        printf("\n--- RESULTADOS RECTÁNGULO ---\n");
+        imprimirResultados(area, perimetro);
+        printf("La diagonal del rectángulo es: %.2f\n", diagonal);
+        
+    } else {
+        printf("Opción de círculo seleccionada\n");
+        
+        // Solicitar radio del círculo
+        printf("Ingrese el radio del círculo: ");
+        scanf("%f", &radio);
+        
+        // Calcular propiedades del círculo
+        area = calcularAreaCirculo(radio);
+        perimetro = calcularPerimetroCirculo(radio);
+        
+        // Mostrar resultados
+        printf("\n--- RESULTADOS CÍRCULO ---\n");
+        imprimirResultados(area, perimetro);
+    }
+    
+    return 0;
+}
