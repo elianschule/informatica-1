@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define TAM 20
+
+// Prototipos
+int cuantas_piezas(int);
+int rectificable(float, float);
+int rechazada(float, float);
+void cargar_piezas(float *, int);
+int contar(int (*)(float, float), float, float *, int);
+float* reservar_memoria(int);
+void segregar(int (*)(float, float), float, float *, int, float *);
+void mostrar_piezas(char *, float *, int);
+
+int main (void) {
+    float diametros[TAM] = {0};
+    int n;
+    float max = 12;
+    float min = 10;
+
+    n = cuantas_piezas(TAM);
+    cargar_piezas(diametros, n);
+
+    int n_rectificar = contar(rectificable, max, diametros, n);
+    float *p_rectificables = reservar_memoria(n_rectificar);
+    if (p_rectificables != NULL)
+        segregar(rectificable, max, diametros, n, p_rectificables);
+
+    int n_rechazar = contar(rechazada, min, diametros, n);
+    float *p_rechazadas = reservar_memoria(n_rechazar);
+    if (p_rechazadas != NULL)
+        segregar(rechazada, min, diametros, n, p_rechazadas);
+
+    mostrar_piezas("Piezas rectificables", p_rectificables, n_rectificar);
+    mostrar_piezas("Piezas rechazadas", p_rechazadas, n_rechazar);
+
+    free(p_rectificables);   // free(NULL) es seguro
+    free(p_rechazadas);
+
+    return 0;
+}
+
+// ----------------------------------------------------------------
+
+int cuantas_piezas(int max) {
+    int n;
+    do {
+        printf("Cuántas piezas ingresará? ");
+        if (scanf("%d", &n) != 1) {        // validar scanf brevemente
+            // consumir entrada inválida
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF) ;
+            n = -1;
+        }
+    } while (n < 0 || n > max);
+    return n;
+}
+
+// ----------------------------------------------------------------
+// Devuelve 1 si el diámetro es mayor al máximo permitido
+int rectificable(float diametro, float valor) {
+    if (diametro > valor)
+        return 1;
+    else
+        return 0;
+}
+
+// Devuelve 1 si el diámetro es menor al mínimo permitido
+int rechazada(float diametro, float valor) {
+    if (diametro < valor)
+        return 1;
+    else
+        return 0;
+}
+
+// ----------------------------------------------------------------
+// (a) Cargar piezas con validación de positivos
+void cargar_piezas(float *p, int n) {
+    for (int i = 0; i < n; i++) {
+        float diametro;
+        do {
+            printf("Ingrese diámetro de pieza %d: ", i);
+            if (scanf("%f", &diametro) != 1) {
+                // entrada inválida: limpiar buffer y repetir
+                int c;
+                while ((c = getchar()) != '\n' && c != EOF) ;
+                diametro = -1.0f;
+                printf("Entrada inválida. Ingrese un número.\n");
+                continue;
+            }
+            if (diametro <= 0)
+                printf("Error: el diámetro debe ser positivo.\n");
+        } while (diametro <= 0);
+        *(p + i) = diametro;
+    }
+}
+
+// ----------------------------------------------------------------
+// (b) Contar cuántas cumplen el criterio (rectificable o rechazada)
+int contar(int (*criterio)(float, float), float valor, float *p, int n) {
+    int contador = 0;
+    for (int i = 0; i < n; i++) {
+        if (criterio(*(p + i), valor))
+            contador++;
+    }
+    return contador;
+}
+
+// ----------------------------------------------------------------
+// (c) Reservar memoria dinámica para n floats
+float* reservar_memoria(int n) {
+    if (n <= 0) {
+        return NULL; // no reservar si no necesitamos elementos
+    }
+    float *p = (float *) malloc((size_t)n * sizeof(float));
+    if (p == NULL) {
+        printf("Error: no se pudo reservar memoria.\n");
+        exit(1);
+    }
+    return p;
+}
+
+// ----------------------------------------------------------------
+// (d) Segregar los valores que cumplen el criterio
+void segregar(int (*criterio)(float, float), float valor, float *p, int n, float *q) {
+    if (q == NULL) return; // nada que hacer si no hay memoria reservada
+    int j = 0;
+    for (int i = 0; i < n; i++) {
+        if (criterio(*(p + i), valor)) {
+            *(q + j) = *(p + i);
+            j++;
+        }
+    }
+}
+
+// ----------------------------------------------------------------
+// (e) Mostrar las piezas con mensaje
+void mostrar_piezas(char *mensaje, float *p, int n) {
+    printf("\n%s:\n", mensaje);
+    if (n == 0) {
+        printf("No hay piezas en esta categoría.\n");
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        printf("Diámetro: %.2f\n", *(p + i));
+    }
+}
